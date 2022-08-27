@@ -40,7 +40,6 @@ _Suggestions are always welcome!_
 
 **Why you shouldn't use it:**
 
-- Not fitted for data engineering - the template configuration setup is not designed for building data processing pipelines that depend on each other.
 - Limits you as much as pytorch lightning limits you.
 - Lightning and Hydra are still evolving and integrate many libraries, which means sometimes things break - for the list of currently known problems visit [this page](https://github.com/ashleve/lightning-hydra-template/labels/bug).
 
@@ -130,7 +129,6 @@ The directory structure of new project looks like this:
 ├── src                    <- Source code
 │   ├── datamodules              <- Lightning datamodules
 │   ├── models                   <- Lightning models
-│   ├── tasks                    <- Different scenarios, like training, evaluation, etc.
 │   ├── utils                    <- Utility scripts
 │   │
 │   ├── eval.py                  <- Run evaluation
@@ -543,7 +541,7 @@ Switch between models and datamodules with command line arguments:
 python train.py model=mnist
 ```
 
-Example pipeline managing the instantiation logic: [src/tasks/train_task.py](src/tasks/train_task.py).
+Example pipeline managing the instantiation logic: [src/train.py](src/train.py).
 
 <br>
 
@@ -753,7 +751,7 @@ Template comes with generic tests implemented with `pytest`.
 pytest
 
 # run tests from specific file
-pytest tests/shell/test_basic_commands.py
+pytest tests/test_train.py
 
 # run all tests except the ones marked as slow
 pytest -k "not slow"
@@ -775,7 +773,7 @@ There is also `@RunIf` decorator implemented, that allows you to run tests only 
 
 ## Hyperparameter Search
 
-You can define hyperparemter search by adding new config file to [configs/hparams_search](configs/hparams_search).
+You can define hyperparameter search by adding new config file to [configs/hparams_search](configs/hparams_search).
 
 <details>
 <summary><b>Show example hyperparameter search config</b></summary>
@@ -863,7 +861,7 @@ python train.py trainer=ddp
 The simplest way is to pass datamodule attribute directly to model on initialization:
 
 ```python
-# ./src/tasks/train_task.py
+# ./src/train.py
 datamodule = hydra.utils.instantiate(config.datamodule)
 model = hydra.utils.instantiate(config.model, some_param=datamodule.some_param)
 ```
@@ -873,7 +871,7 @@ model = hydra.utils.instantiate(config.model, some_param=datamodule.some_param)
 Similarly, you can pass a whole datamodule config as an init parameter:
 
 ```python
-# ./src/tasks/train_task.py
+# ./src/train.py
 model = hydra.utils.instantiate(config.model, dm_conf=config.datamodule, _recursive_=False)
 ```
 
